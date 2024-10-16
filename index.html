@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levantamiento de Tickets</title>
+    <style>
+        /* CSS en línea */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000; /* Fondo negro para toda la página */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Colocar elementos en columna */
+            height: 100vh;
+            margin: 0;
+        }
+
+        .ticket-container {
+            background-color: #fff; /* Fondo blanco para el formulario */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000; /* Color de texto negro */
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #000; /* Color de texto negro */
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #responseMessage {
+            margin-top: 20px;
+            text-align: center;
+            color: #28a745;
+        }
+
+        /* Estilo para la imagen en la parte superior */
+        .header-image {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 300px; /* Ajustar la imagen al ancho del formulario */
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Imagen en la parte superior -->
+    <img src="noveva-white-logo.png" alt="Logo" class="header-image">
+
+    <div class="ticket-container">
+        <h2>Ticket</h2>
+        <form id="ticketForm" enctype="multipart/form-data">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="email">Correo Electrónico:</label>
+            <input type="email" id="email" name="email" required>
+	
+	    <label for="area">Area o Unidad de Negocio:</label>
+            <input type="area" id="area" name="area" required>
+
+            <label for="problema">Descripción del problema:</label>
+            <textarea id="problema" name="problema" required></textarea>
+	
+            <button type="submit">Enviar Ticket</button>
+        </form>
+        <div id="responseMessage"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        (function() {
+            emailjs.init("Fy3c2jCUn73eHUzeE"); // Reemplaza con tu User ID de EmailJS
+        })();
+
+        document.getElementById('ticketForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Crear un objeto FormData para manejar los datos del formulario y el archivo
+            const formData = new FormData();
+
+            // Obtener los valores del formulario
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const problema = document.getElementById('problema').value;
+	    const area = document.getElementById('area').value;
+
+            // Agregar los datos al FormData
+            formData.append('nombre', nombre);
+            formData.append('email', email);
+            formData.append('problema', problema);
+	    formData.append('area', area);
+
+            // Enviar el correo al usuario y al soporte
+            emailjs.send("service_d1smav7", "template_8r8ifok", {
+                nombre: nombre,
+                email: email,
+                problema: problema,
+		area: area,
+            })
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                document.getElementById('responseMessage').textContent = '¡Ticket enviado exitosamente!';
+
+                // Limpiar el formulario
+                document.getElementById('ticketForm').reset();
+            }, function(error) {
+                console.log('FAILED...', error);
+                document.getElementById('responseMessage').textContent = 'Hubo un error al enviar el ticket.';
+            });
+        });
+    </script>
+
+</body>
+</html>
